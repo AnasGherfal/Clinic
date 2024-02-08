@@ -4,16 +4,18 @@ import config from "../config";
 import cors from "cors"
 import {routes} from './routes/routes'
 import path from "path"; 
+
 const app = express();
+
 
  app.use(express.json());
  app.use(cors(({ origin:'https://clinic-whnd.onrender.com'})));
  app.use(bodyParser.json());
- app.use(express.static(path.join(__dirname, "../client/build")));
+ app.use(express.static(path.join(__dirname, "../../Clinic_Client/build")));
 
  app.use('/api', routes)
  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../client/build", "index.html"));
+    res.sendFile(path.join(__dirname, "../../Clinic_Client/build", "index.html"));
   });
 app.listen(config.port, () => {
 });
