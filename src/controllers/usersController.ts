@@ -80,14 +80,12 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
         const userDoc = await getDoc(userDocRef);
 
         if (userDoc.exists()) {
-            // Update the user data
             await setDoc(userDocRef, {
                 firstName: userData.firstName,
                 lastName: userData.lastName,
                 email: userData.email,
             });
 
-            // Return the updated user
             const updatedUserDoc = await getDoc(userDocRef);
             const updatedUserData = updatedUserDoc.data();
             if (updatedUserData) {
@@ -113,7 +111,7 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
 };
 export const deleteUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const userId = req.params.userId; // Assuming you are passing the userId as a route parameter
+        const userId = req.params.userId; 
         const userDocRef = doc(firestore, 'users', userId);
         
         await deleteDoc(userDocRef);
