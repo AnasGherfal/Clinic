@@ -6,7 +6,7 @@ import {routes} from './routes/users'
 const app = express();
 
  app.use(express.json());
- app.use(cors());
+ app.use(cors(({ origin:'https://clinic-whnd.onrender.com'})));
  app.use(bodyParser.json());
 
  app.use('/api', routes)
