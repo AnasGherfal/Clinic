@@ -9,7 +9,6 @@ const firestore = getFirestore(firebase);
 export const addUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const data = req.body;
-        // Use collection method with a path (e.g., 'users')
         const userDataWithRole = {
             ...data,
             role: 'user',
@@ -26,19 +25,19 @@ export const getAllUsers = async (req: Request, res: Response, next: NextFunctio
         const users = await collection(firestore, 'users');
         const data = await getDocs(users);
         const usersArray: User[] = [];
-
+        const currentTime = new Date();
         if (data.empty) {
-            res.status(404).send('No student record found');
+            res.status(404).send('No Users record found');
         } else {
             data.forEach((doc) => {
-                const student = new User(
+                const user = new User(
                     doc.id,
                     doc.data().firstName,
                     doc.data().lastName,
                     doc.data().email,
                     doc.data().role,
                 );
-                usersArray.push(student);
+                usersArray.push(user);
             });
             res.status(200).send(usersArray);
         }
@@ -48,7 +47,7 @@ export const getAllUsers = async (req: Request, res: Response, next: NextFunctio
 };
 export const getUserById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const userId = req.params.userId; // Assuming you are passing the userId as a route parameter
+        const userId = req.params.userId; 
         const userDocRef = doc(firestore, 'users', userId);
 
         const userDoc = await getDoc(userDocRef);
@@ -112,6 +111,13 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
 export const deleteUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const userId = req.params.userId; 
+
+        const requestingUserId = req.body.requestingUserId;
+
+        if (userId === requestingUserId) {
+            res.status(400).send("Users cannot delete themselves.");
+            return;
+        }
         const userDocRef = doc(firestore, 'users', userId);
         
         await deleteDoc(userDocRef);

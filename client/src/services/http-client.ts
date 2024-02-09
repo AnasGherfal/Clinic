@@ -2,7 +2,6 @@ import axios  from 'axios';
 
 
 const token = localStorage.getItem("authToken");
-console.log(process.env)
 const httpClient = axios.create({
   baseURL: process.env.REACT_APP_BASE_URL,
   timeout: 60000,

@@ -22,6 +22,15 @@ export const createAppointment = async (req: Request, res: Response, next: NextF
   try {
       const { title, start, end } = req.body;
 
+      const appointmentsRef = db.ref('appointments').orderByChild('start').equalTo(start);
+      const conflictingAppointmentsSnapshot = await appointmentsRef.once('value');
+      const conflictingAppointments = conflictingAppointmentsSnapshot.val();
+
+      if (conflictingAppointments) {
+        res.status(403).send('An appointment already exists at this time');
+        return;
+    }
+
       const appointmentRef = db.ref('appointments').push();
       await appointmentRef.set({
           title,
