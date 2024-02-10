@@ -9,16 +9,33 @@ const firestore = getFirestore(firebase);
 export const addUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const data = req.body;
+        const { firstName, lastName, email } = data;
+
+        if (!firstName || !lastName) {
+            res.status(400).send("First name and last name are required.");
+            return;
+        }
+
+        const usersCollection = collection(firestore, 'users');
+        const querySnapshot = await getDocs(usersCollection);
+        const existingUser = querySnapshot.docs.find(doc => doc.data().email === email);
+        if (existingUser) {
+            res.status(400).send("User with this email already exists.");
+            return;
+        }
+
         const userDataWithRole = {
             ...data,
             role: 'user',
         };
-        const docRef = await addDoc(collection(firestore, 'users'), userDataWithRole);
-        res.send(`User added: ${docRef}`);
+        const docRef = await addDoc(usersCollection, userDataWithRole);
+        res.send(`User added: ${docRef.id}`);
     } catch (error:any) {
         res.status(400).send(error.message);
     }
 };
+
+
 
 export const getAllUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
